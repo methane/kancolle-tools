@@ -88,9 +88,7 @@ def repair(client):
                      'api_highspeed': 0})
 
 def main():
-    import sys
     client = Client(sys.argv[1])
-
     while True:
         repair(client)
         time.sleep(123)
