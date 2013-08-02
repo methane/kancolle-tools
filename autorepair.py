@@ -45,6 +45,7 @@ def find_free_dock(docks):
 
 
 def find_repairable(member, decks, docks):
+    u"""入渠する艦を選んでその ship を返す."""
     cant_repair = set()
 
     # 編成されてる艦を入渠するとバレるのでしない.
@@ -55,9 +56,6 @@ def find_repairable(member, decks, docks):
     for dock in docks:
         cant_repair.add(dock['api_ship_id'])
 
-    # ランダムで入渠させる.
-    # TODO: luckey が高いやつ優先とかしたい
-    random.shuffle(member)
     for ship in member:
         #print(ship)
         if ship['api_nowhp'] >= ship['api_maxhp']:
@@ -65,7 +63,7 @@ def find_repairable(member, decks, docks):
         ship_id = ship['api_id']
         if ship_id in cant_repair:
             continue
-        return ship_id
+        return ship
     return None
 
 
@@ -74,24 +72,30 @@ def repair(client):
     ship2 = client.call('/api_get_member/ship2',
                         {'api_sort_order': 2, 'api_sort_key': 1})
 
+    # 修理時間が短い艦から入渠させる.
+    member = ship2['api_data']
+    member.sort(lambda m: m['api_ndock_time'])
+
     dock_no = find_free_dock(ndock['api_data'])
-    ship_id = find_repairable(ship2['api_data'], ship2['api_data_deck'], ndock['api_data'])
+    ship = find_repairable(member, ship2['api_data_deck'], ndock['api_data'])
     print('dock_no=', dock_no, ' ship_id=', ship_id)
-    if ship_id is None:
+
+    if not dock_no:
+        return
+
+    if ship is None:
         sys.exit()
 
-    if dock_no and ship_id:
-        # TODO: 修理時間が8時間超える場合は高速修理アイテム使う
-        client.call('/api_req_nyukyo/start',
-                    {'api_ship_id': ship_id,
-                     'api_ndock_id': dock_no,
-                     'api_highspeed': 0})
+    client.call('/api_req_nyukyo/start',
+                {'api_ship_id': ship['api_id'],
+                 'api_ndock_id': dock_no,
+                 'api_highspeed': 0})
 
 def main():
     client = Client(sys.argv[1])
     while True:
         repair(client)
-        time.sleep(123)
+        time.sleep(234)
 
 
 if __name__ == '__main__':
