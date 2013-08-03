@@ -74,11 +74,11 @@ def repair(client):
 
     # 修理時間が短い艦から入渠させる.
     member = ship2['api_data']
-    member.sort(lambda m: m['api_ndock_time'])
+    member.sort(key=lambda m: m['api_ndock_time'])
 
     dock_no = find_free_dock(ndock['api_data'])
     ship = find_repairable(member, ship2['api_data_deck'], ndock['api_data'])
-    print('dock_no=', dock_no, ' ship_id=', ship_id)
+    print('dock_no=', dock_no, ' ship=', ship)
 
     if not dock_no:
         return
