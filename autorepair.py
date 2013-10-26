@@ -17,7 +17,7 @@ class Client(object):
     def __init__(self, token):
         self.session = requests.session()
         self.session.headers.update({
-            'Uesr-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36',
             'Origin': 'http://203.104.105.167',
             'Referer': 'http://203.104.105.167/kcs/port.swf?version=1.2.0',})
         self.base_data = {'api_verno': 1, 'api_token': token}
